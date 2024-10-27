@@ -18,6 +18,13 @@
                 </template>
             </el-input>
         </el-form-item>
+        <el-form-item prop="nickName" v-if="!isLogin">
+            <el-input size="large" clearable placeholder="请输入昵称" v-model.trim="formData.nickName">
+                <template #prefix>
+                    <span class="iconfont icon-user-nick"></span>
+                </template>
+            </el-input>
+        </el-form-item>
         <el-form-item prop="password" >
             <el-input size="large" show-password clearable placeholder="请输入密码" v-model.trim="formData.password">
                 <template #prefix>
@@ -25,10 +32,28 @@
                 </template>
             </el-input>
         </el-form-item>
+        <el-form-item prop="rePpassword" v-if="!isLogin">
+            <el-input size="large" show-password clearable placeholder="请再次输入密码" v-model.trim="formData.rePpassword">
+                <template #prefix>
+                    <span class="iconfont icon-password"></span>
+                </template>
+            </el-input>
+        </el-form-item>
+        <el-form-item prop="checkCode" v-if="!isLogin">
+            <el-input size="large" show-password clearable placeholder="请输入验证码" v-model.trim="formData.checkCode">
+                <template #prefix>
+                    <span class="iconfont icon-checkcode"></span>
+                </template>
+            </el-input>
+        </el-form-item>
         <div>
-            <el-button type="primary" class="login-bth" @click="">登录</el-button>
+            <el-button type="primary" class="login-bth" @click="">{{isLogin ? '登录': '注册'}}</el-button>
         </div>
-        <div class="bottom-link">没有账号？</div>
+        <div class="bottom-link"> 
+            <span class="a-link" @click="changeOpType">
+                {{isLogin ? '没有账号？': '已有账号？'}}
+            </span>
+        </div>
         </el-form> 
       </div>  
     </div>
@@ -43,6 +68,13 @@ const formDataRef = ref();
 const rules = {
   title: [{ required: true, message: "请输入内容" }],
 };
+const changeOpType = () => {
+    window.ipcRenderer.send('loginOrRegister', !isLogin.value)
+    isLogin.value = !isLogin.value
+}
+
+
+const isLogin = ref(true);
 
 </script>
   
@@ -70,7 +102,7 @@ const rules = {
     }
 
     .login-form {
-        padding: 10px 15px 85px 10px;
+        padding: 10px 15px 50px 10px;
         :deep(.el-input__wrapper) {
             border: none ; 
             box-shadow: none ; 
@@ -110,7 +142,6 @@ const rules = {
 
         .login-bth {
             margin-top: 20px;
-            // margin-left: 7.5px;
             width: 100%;
             background: #07c160;
             height: 36px;
