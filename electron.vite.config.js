@@ -15,6 +15,15 @@ export default defineConfig({
         '@': resolve('src/renderer/src')
       }
     },
-    plugins: [vue()]
+    plugins: [vue()],
+    // server: {
+    //   proxy: {
+    //     '/userInfo': {
+    //       target: 'http://127.0.0.1:8999',
+    //       changeOrigin: true,
+    //       rewrite: (path) => path.replace(/^\/userInfo/, '/userInfo'),
+    //     },
+    //   },
+    // },
   }
 })
