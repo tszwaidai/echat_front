@@ -14,12 +14,19 @@ import Utils from '@/utils/Utils'
 import Verify from '@/utils/Verify'
 import Message from '@/utils/Message.js'
 
+import Layout from '@/components/Layout.vue'
+import WinOp from '@/components/WinOp.vue'
+
 
 const app = createApp(App)
 app.use(router)
 app.mount('#app')
 app.use(ElementPlus)
 app.use(Pinia.createPinia())
+
+app.component("Layout", Layout)
+app.component("WinOp", WinOp)
+
 
 app.config.globalProperties.$http = axios; 
 app.config.globalProperties.Utils = Utils

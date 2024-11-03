@@ -1,7 +1,7 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow ,Menu, Tray} from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import { onLoginOrRegister , onLoginSuccess} from '../main/ipc'
+import { onLoginOrRegister , onLoginSuccess, winTitleOp} from './ipc'
 
 import icon from '../../resources/icon.png?asset'
 const NODE_ENV = process.env.NODE_ENV
@@ -53,7 +53,7 @@ function createWindow() {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
-    mainWindow.seTitle("EasyChat")
+    // mainWindow.seTitle("EasyChat")
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -69,6 +69,23 @@ function createWindow() {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 
+  // 托盘
+  // const tray = new Tray(icon);
+  // const contextMenu = [
+  //   {
+  //     label: '退出EasyChat', click: function () {
+  //       app.exit();
+  //     }
+  //   }
+  // ]
+
+  // const menu = Menu.buildFromTemplate(contextMenu);
+  // tray.setToolTip('EasyChat');
+  // tray.setContextMenu(menu);
+  // tray.on("click", () => {
+  //   mainWindow.setSkipTaskbar(false);
+  //   mainWindow.show();
+  // })
 
   // 监听登录注册
   onLoginOrRegister((isLogin)=> {
@@ -90,7 +107,53 @@ function createWindow() {
     mainWindow.setMaximizable(true);
     //设置最小窗口大小
     mainWindow.setMinimumSize(800, 600);
+
+    // TODO 管理后台的窗口操作
+
+
+    contextMenu.unshift({
+      label: "用户：" + config.nickName, click: function () {
+
+      }
+    })
+    tray.setContextMenu(Menu.buildFromTemplate(contextMenu));
+
+  });
+
+  // 置顶 放大 缩小
+  winTitleOp((e,{action, data})=> {
+    const webContents = e.sender;
+    const win = BrowserWindow.fromWebContents(webContents);
+    switch(action) {
+      case "close": {
+        if (data.closeType == 0) {
+          win.close();
+        } else {
+          win.setSkipTaskbar(true);
+          win.hide();
+        }
+        break;
+      }
+      case "minimize": {
+        win.minimize();
+        break;
+      }
+      case "maximize": {
+        win.maximize();
+        break;
+      }
+      case "unmaximize": {
+        win.unmaximize();
+        break;
+      }
+      case "top": {
+        win.setAlwaysOnTop(data.top);
+        break;
+      }
+        
+    }
   })
+  
 
 }
 

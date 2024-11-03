@@ -1,5 +1,5 @@
 <template>
-  <div>这是聊天主窗口111</div>
+  <div>设置页</div>
 </template>
 
 <script setup>

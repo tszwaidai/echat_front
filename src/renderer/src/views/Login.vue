@@ -97,6 +97,8 @@
         </el-form> 
       </div>  
     </div>
+    <!-- 置顶 放大 缩小组件 -->
+    <WinOp :showSetTop="false" :showMin="false" :showMax="false" :closeType="0"></WinOp>
   </template>
   
 <script setup>
@@ -105,6 +107,7 @@ import { getCaptcha, login, register } from '../api/Login';
 import { useUserStore } from '@/stores/userStore'
 import md5 from 'js-md5';
 import { useRouter } from 'vue-router';
+import WinOp from '../components/WinOp.vue';
 const router = useRouter()
 
 const userStore = useUserStore()

@@ -1,8 +1,10 @@
 <template>
-  <div>这是聊天主窗口111</div>
+    <Blank></Blank>
 </template>
 
 <script setup>
+
+import Blank from '../../components/Blank.vue';
 
 </script>
 
