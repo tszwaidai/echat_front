@@ -14,5 +14,8 @@ export const useUserStore = defineStore('user', {
       this.userInfo = info;
       localStorage.setItem('userInfo', JSON.stringify(info));
     },
+    getUserInfo() {
+      return this.userInfo;
+    }
   },
 });

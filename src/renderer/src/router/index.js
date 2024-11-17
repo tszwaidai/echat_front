@@ -32,6 +32,21 @@ const router = createRouter({
           path: "/contact/blank",
           name: "空白页",
           component: () => import('@/views/contact/BlankPage.vue'),
+        },
+        {
+          path: "/contact/search",
+          name: "搜索",
+          component: () => import('@/views/contact/Search.vue'),
+        },
+        {
+          path: "/contact/createGroup",
+          name: "新建群聊",
+          component: () => import('@/views/contact/GroupEdit.vue'),
+        },
+        {
+          path: "/contact/userDetail",
+          name: "用户详情",
+          component: () => import('@/views/contact/UserDetail.vue'),
         }]
       },{
         path: '/setting',

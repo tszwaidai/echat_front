@@ -31,7 +31,7 @@
       </router-view>
     </div>
   </div>
-  <WinOp></WinOp>
+  <!-- <WinOp></WinOp> -->
 </template>
 
 <script setup>
@@ -69,6 +69,10 @@ const changeMenu = (item)=> {
   currentMenu.value = item
   router.push(item.path)
 }
+
+
+
+
 
 </script>
 

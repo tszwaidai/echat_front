@@ -21,7 +21,18 @@
             <div :class="['iconfont', sub.icon]" :style="{ background: sub.iconBgColor }"></div>
             <div class="text">{{ sub.name }}</div>
           </div>
-          <template v-for="contact in item.contactData"></template>
+          <template v-if="item.contactData && item.contactData.length > 0">
+              <div 
+                v-for="contact in item.contactData"
+                :key="contact[item.contactId]"
+                :class="['part-item', contact[item.contactId] == route.query.contactId ? 'active' : '']"
+                @click="contactDetail(contact, item)"
+              >
+                <Avatar :userId="contact[item.contactId]" :width="35"></Avatar>
+                <!-- <div class="text">{{ contact[item.contactName] }}</div> -->
+                <div class="text">{{ contact.nickName }}</div> 
+              </div>
+            </template>
           <template v-if="item.contactData && item.contactData.length == 0">
             <div class="no-data">
               {{ item.emptyMsg }}
@@ -41,15 +52,24 @@
 </template>
 
 <script setup>
-
+import Avatar  from '../../components/Avatar.vue';
 import Layout from '../../components/Layout.vue';
-import { ref, reactive, getCurrentInstance, nextTick } from "vue"
+import { loadContacts } from '../../api/Contact'
+import { ref, reactive, getCurrentInstance, nextTick, onMounted ,watch,onUnmounted} from "vue"
 const { proxy } = getCurrentInstance();
 
 import { useRouter, useRoute } from "vue-router"
+import { userContactStateStore } from '@/stores/contactStateStore';
+const contactStateStore = userContactStateStore
+
 const router = useRouter()
 const route = useRoute()
 
+const searchKey = ref()
+const search = () => {
+
+}
+ 
 const partList = ref([
   {
     partName: '新朋友',
@@ -99,7 +119,7 @@ const partList = ref([
     partName: '我的好友',
     children: [],
     contactId: 'contactId',
-    contactName: 'contactName',
+    contactName: 'nickName',
     contactData: [],
     contactPath: '/contact/userDetail',
     emptyMsg: '暂未好友'
@@ -107,6 +127,95 @@ const partList = ref([
 ])
 
 const rightTitle = ref()
+
+const partJump = (data) => {
+  if (data.showTitle) {
+    rightTitle.value = data.name
+  } else {
+    rightTitle.value = null
+  }
+
+  // TODO 处理联系人好友申请数量已读
+  router.push(data.path)
+  
+}
+
+//加载联系人
+const loadContact = async (contactType) => {
+  try {
+    const token = localStorage.getItem('token');
+    console.log("获取到的token：", token);
+    const result = await loadContacts({
+      token, contactType
+    })
+    console.log("获取到的联系人用户：",result.data)
+    if (result.code == 200) {
+      partList.value[3].contactData = result.data
+      console.log("更新后的：",partList.value[3].contactData)
+    } else {
+      proxy.Message.error('加载联系人错误');
+    }
+
+  } catch(error) {
+    proxy.Message.error('加载联系人错误');
+    console.error("加载联系人错误：", error);
+  }
+    
+}
+
+// TODO 加载群组
+const loadMyGroup = async () => {
+
+}
+
+const contactDetail = (contact, part) => {
+  if (part.showTitle) {
+    rightTitle.value = contact[part.contactName]
+  } else {
+    rightTitle.value = null
+  }
+  router.push({
+    path: part.contactPath,
+    query: {
+      contactId: contact[part.contactId]
+    }
+  })
+}
+
+// 全局监听 刷新联系人列表
+onMounted(() => {
+  loadContact("用户");
+  window.addEventListener('refreshContact', () => {
+    loadContact('用户');
+  });
+})
+
+onUnmounted(() => {
+  window.removeEventListener('refreshContact', () => {
+    loadContact('用户');
+  });
+});
+
+// watch(
+//   () => contactStateStore.contactReload,
+//   (newVal) => {
+//     if (!newVal) {
+//       return
+//     }
+//     switch (newVal) {
+//       case 'USER':
+//       case 'GROUP':
+//         loadContact(newVal)
+//         break
+//     }
+//   }, 
+//   // TODO 需要加入群组
+  
+//   { immediate: true, deep: true }
+// );
+
+
+
 
 </script>
 
@@ -182,7 +291,7 @@ const rightTitle = ref()
 }
 .title-panel {
   width: 100%;
-  height: 60px;
+  height: 68px;
   display: flex;
   align-items: center;
   padding-left: 10px;

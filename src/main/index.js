@@ -111,12 +111,12 @@ function createWindow() {
     // TODO 管理后台的窗口操作
 
 
-    contextMenu.unshift({
-      label: "用户：" + config.nickName, click: function () {
+    // contextMenu.unshift({
+    //   label: "用户：" + config.nickName, click: function () {
 
-      }
-    })
-    tray.setContextMenu(Menu.buildFromTemplate(contextMenu));
+    //   }
+    // })
+    // tray.setContextMenu(Menu.buildFromTemplate(contextMenu));
 
   });
 
